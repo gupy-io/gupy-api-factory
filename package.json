@@ -17,16 +17,10 @@
   },
   "homepage": "https://github.com/gupy-io/gupy-api-factory#readme",
   "dependencies": {
-    "bluebird": "^3.5.0",
     "body-parser": "^1.17.2",
     "elastic-apm-node": "2.0.1",
-    "jsonwebtoken": "^8.4.0",
     "morgan": "^1.8.2",
-    "prom-client": "^11.1.1",
-    "response-time": "^2.3.2",
     "restify": "^4.3.1",
-    "sequelize": "^4.42.0",
-    "swagger-restify-mw": "^0.7.0",
-    "uuid": "^3.1.0"
+    "swagger-restify-mw": "^0.7.0"
   }
 }
