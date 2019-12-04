@@ -70,14 +70,14 @@ module.exports.createApp = ({ integrityCheckers }) => {
 };
 
 module.exports.injectMiddlewaresAndListen = async ({
-  app, isSentryEnabled, isDevelopment, isLogRequestEnabled, logger, raven,
+  app, isSentryEnabled, isDevelopment, isLogRequestEnabled, logger, sentry,
   closeSequelize, port, env, appRoot, swaggerFile, isElasticApmEnabled, isNewRelicApmEnabled,
   requestTraceMiddleware, prometheusMiddleware, auditTrailMiddleware, unexpectedError,
 }) => {
   UnexpectedError = unexpectedError;
 
   if (isSentryEnabled) {
-    app.use(raven.requestHandler());
+    app.use(sentry.Handlers.requestHandler());
   }
 
   if (isLogRequestEnabled) {
