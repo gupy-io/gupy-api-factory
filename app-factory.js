@@ -6,8 +6,6 @@ const elasticApmNode = require('elastic-apm-node');
 
 const { ResponseJsonMiddleware } = require('./middlewares/response-json-middleware');
 
-let UnexpectedError;
-
 const verifyIntegrityErrors = ({ integrityCheckers }) => {
   const errors = integrityCheckers.map((checker) => {
     try {
@@ -18,8 +16,8 @@ const verifyIntegrityErrors = ({ integrityCheckers }) => {
     }
   }).filter(error => error);
   if (errors.length) {
-    throw new UnexpectedError(errors
-      .reduce((acc, error) => `${acc || ''}${error.message}\n`));
+    throw new Error(errors
+      .reduce((acc, error) => `${acc || ''}${error.message}\n`, ''));
   }
 };
 
