@@ -18,8 +18,8 @@ const verifyIntegrityErrors = ({ integrityCheckers }) => {
     }
   }).filter(error => error);
   if (errors.length) {
-    throw new UnexpectedError(errors
-      .reduce((acc, error) => `${acc || ''}${error.message}\n`));
+    throw new Error(errors
+      .reduce((acc, error) => `${acc || ''}${error.message}\n`, ''));
   }
 };
 
