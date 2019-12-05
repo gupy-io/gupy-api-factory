@@ -62,17 +62,16 @@ const setupElasticApm = ({ logger, elasticApmEnabled }) => {
   }
 };
 
-module.exports.createApp = ({ integrityCheckers }) => {
-  verifyIntegrityErrors({ integrityCheckers });
+module.exports.createApp = () => {
   return restify.createServer();
 };
 
 module.exports.injectMiddlewaresAndListen = async ({
   app, isSentryEnabled, isDevelopment, isLogRequestEnabled, logger, sentry,
   closeSequelize, port, env, appRoot, swaggerFile, isElasticApmEnabled, isNewRelicApmEnabled,
-  requestTraceMiddleware, prometheusMiddleware, auditTrailMiddleware, unexpectedError,
+  requestTraceMiddleware, prometheusMiddleware, auditTrailMiddleware, integrityCheckers = [],
 }) => {
-  UnexpectedError = unexpectedError;
+  verifyIntegrityErrors({ integrityCheckers });
 
   if (isSentryEnabled) {
     app.use(sentry.Handlers.requestHandler());
