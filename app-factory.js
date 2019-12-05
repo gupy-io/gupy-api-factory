@@ -6,8 +6,6 @@ const elasticApmNode = require('elastic-apm-node');
 
 const { ResponseJsonMiddleware } = require('./middlewares/response-json-middleware');
 
-let UnexpectedError;
-
 const verifyIntegrityErrors = ({ integrityCheckers }) => {
   const errors = integrityCheckers.map((checker) => {
     try {
@@ -18,8 +16,8 @@ const verifyIntegrityErrors = ({ integrityCheckers }) => {
     }
   }).filter(error => error);
   if (errors.length) {
-    throw new UnexpectedError(errors
-      .reduce((acc, error) => `${acc || ''}${error.message}\n`));
+    throw new Error(errors
+      .reduce((acc, error) => `${acc || ''}${error.message}\n`, ''));
   }
 };
 
@@ -64,17 +62,16 @@ const setupElasticApm = ({ logger, elasticApmEnabled }) => {
   }
 };
 
-module.exports.createApp = ({ integrityCheckers }) => {
-  verifyIntegrityErrors({ integrityCheckers });
+module.exports.createApp = () => {
   return restify.createServer();
 };
 
 module.exports.injectMiddlewaresAndListen = async ({
   app, isSentryEnabled, isDevelopment, isLogRequestEnabled, logger, raven,
   closeSequelize, port, env, appRoot, swaggerFile, isElasticApmEnabled, isNewRelicApmEnabled,
-  requestTraceMiddleware, prometheusMiddleware, auditTrailMiddleware, unexpectedError,
+  requestTraceMiddleware, prometheusMiddleware, auditTrailMiddleware, integrityCheckers = [],
 }) => {
-  UnexpectedError = unexpectedError;
+  verifyIntegrityErrors({ integrityCheckers });
 
   if (isSentryEnabled) {
     app.use(raven.requestHandler());
