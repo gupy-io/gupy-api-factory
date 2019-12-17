@@ -75,6 +75,7 @@ module.exports.injectMiddlewaresAndListen = async ({
 
   if (isSentryEnabled) {
     app.use(sentry.Handlers.requestHandler());
+    app.use(sentry.Handlers.errorHandler());
   }
 
   if (isLogRequestEnabled) {
