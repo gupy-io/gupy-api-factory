@@ -2,12 +2,18 @@ const { NotFoundError } = require('restify');
 
 function ResponseJsonMiddleware(req, res, next) {
   res.json = (json, statusCode = 200) => {
-    res.writeHead(statusCode, {
+    const cacheHeader = res.getHeaders()['cache-control'];
+    const headers = cacheHeader ? {
+      'Cache-Control': cacheHeader,
+      'Content-Type': 'application/json',
+    } : {
       'Cache-Control': 'no-cache, no-store, must-revalidate',
       Pragma: 'no-cache',
       Expires: 0,
       'Content-Type': 'application/json',
-    });
+    };
+
+    res.writeHead(statusCode, headers);
     res.end(JSON.stringify(json));
   };
 
