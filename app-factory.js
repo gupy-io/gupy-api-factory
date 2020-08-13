@@ -38,7 +38,9 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const registerGracefulShutdown = ({ app, closeSequelize, logger }) => {
   const gracefulShutdown = async () => {
     let exitCode = 0
-    const gracePeriod = sleep(GRACE_PERIOD);
+    if (process.env.NODE_ENV === 'production') {
+      await sleep(GRACE_PERIOD);
+    }
     try {
       app.close();
       await closeSequelize();
@@ -46,7 +48,6 @@ const registerGracefulShutdown = ({ app, closeSequelize, logger }) => {
       exitCode = 1;
       logger.error(err);
     }
-    await gracePeriod;
     process.exit(exitCode);
   };
   process.on('SIGINT', gracefulShutdown);
