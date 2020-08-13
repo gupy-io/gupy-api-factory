@@ -32,17 +32,25 @@ const injectSwaggerToApp = ({ app, appRoot, swaggerFile }) => new Promise((resol
   });
 });
 
+// Kubernetes will wait for up to the grace period before forcibly killing the process
+const GRACE_PERIOD = 29 * 1000;
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const registerGracefulShutdown = ({ app, closeSequelize, logger }) => {
-  const gracefulShutdown = () => {
-    app.close();
-    closeSequelize()
-      .then(() => { process.exit(0); })
-      .catch((err) => {
-        logger.error(err);
-        process.exit(1);
-      });
+  const gracefulShutdown = async () => {
+    let exitCode = 0
+    const gracePeriod = sleep(GRACE_PERIOD);
+    try {
+      app.close();
+      await closeSequelize();
+    } catch (err) {
+      exitCode = 1;
+      logger.error(err);
+    }
+    await gracePeriod;
+    process.exit(exitCode);
   };
   process.on('SIGINT', gracefulShutdown);
+  process.on('SIGTERM', gracefulShutdown);
 };
 
 const notifyProcessInitializedGracefully = () => {
