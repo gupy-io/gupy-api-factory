@@ -36,23 +36,36 @@ const injectSwaggerToApp = ({ app, appRoot, swaggerFile }) => new Promise((resol
 const GRACE_PERIOD = 29 * 1000;
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const registerGracefulShutdown = ({ app, closeSequelize, logger }) => {
-  const gracefulShutdown = async () => {
+  let initTime;
+  const gracefulShutdown = async (signal) => {
+    initTime = new Date();
+    logger.info(`Starting app graceful shutdown after signal ${signal}`);
     let exitCode = 0
     if (process.env.NODE_ENV === 'production') {
       await sleep(GRACE_PERIOD);
     }
     try {
-      app.close();
-      await closeSequelize();
+      await Promise.all([
+        new Promise((resolve) => app.close(resolve)),
+        closeSequelize(),
+      ]);
     } catch (err) {
       exitCode = 1;
       logger.error(err);
     }
+    const stopTime = new Date();
+    logger.info(`Shutdown graceful ${stopTime - initTime} ms after signal`);
     process.exit(exitCode);
   };
   process.on('SIGINT', gracefulShutdown);
   process.on('SIGTERM', gracefulShutdown);
+  process.on('exit', (code) => {
+    const stopTime = new Date();
+    logger.info(`Process exit ${stopTime - initTime} ms after signal`);
+    logger.info(`About to exit with code: ${code}`);
+  });
 };
+
 
 const notifyProcessInitializedGracefully = () => {
   // for more information see https://pm2.io/doc/en/runtime/best-practices/graceful-shutdown/
