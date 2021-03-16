@@ -116,6 +116,10 @@ module.exports.injectMiddlewaresAndListen = async ({
   app.use(bodyParser.json({ limit: '50mb' }));
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(restify.plugins.multipartBodyParser());
+  app.use((req, res, next) => {
+    res.header('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload')
+    return next();
+  })
   prometheusMiddleware.injectMetricsRoute(app);
 
   await injectSwaggerToApp({ app, appRoot, swaggerFile });
