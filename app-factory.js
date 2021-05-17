@@ -124,7 +124,7 @@ module.exports.injectMiddlewaresAndListen = async ({
 
   await injectSwaggerToApp({ app, appRoot, swaggerFile });
 
-  app.on('after', swaggerRoutePathMiddleware);
+  // app.on('after', swaggerRoutePathMiddleware);
   app.on('after', auditTrailMiddleware);
   app.listen(port);
   logger.info(`API running on http://localhost:${port}`);
