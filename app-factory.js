@@ -89,7 +89,7 @@ module.exports.createApp = () => {
 };
 
 module.exports.injectMiddlewaresAndListen = async ({
-  app, isSentryEnabled, isDevelopment, isLogRequestEnabled, logger, sentry,
+  app, isSentryEnabled, isDevelopment, isLogRequestEnabled, logger, sentry, swaggerRoutePathMiddleware,
   closeSequelize, port, env, appRoot, swaggerFile, isElasticApmEnabled, isNewRelicApmEnabled,
   requestTraceMiddleware, prometheusMiddleware, auditTrailMiddleware, integrityCheckers = [],
 }) => {
@@ -123,6 +123,8 @@ module.exports.injectMiddlewaresAndListen = async ({
   prometheusMiddleware.injectMetricsRoute(app);
 
   await injectSwaggerToApp({ app, appRoot, swaggerFile });
+
+  app.on('after', swaggerRoutePathMiddleware);
   app.on('after', auditTrailMiddleware);
   app.listen(port);
   logger.info(`API running on http://localhost:${port}`);
