@@ -18,7 +18,7 @@
   "homepage": "https://github.com/gupy-io/gupy-api-factory#readme",
   "dependencies": {
     "body-parser": "^1.17.2",
-    "elastic-apm-node": "2.0.1",
+    "elastic-apm-node": "3.52.2",
     "morgan": "^1.8.2",
     "restify": "^4.3.1",
     "swagger-restify-mw": "^0.7.0"
