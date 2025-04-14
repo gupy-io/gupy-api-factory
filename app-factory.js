@@ -84,8 +84,8 @@ const setupElasticApm = ({ logger, elasticApmEnabled }) => {
   }
 };
 
-module.exports.createApp = () => {
-  return restify.createServer();
+module.exports.createApp = (options) => {
+  return restify.createServer(options);
 };
 
 module.exports.injectMiddlewaresAndListen = async ({
